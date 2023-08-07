@@ -19,6 +19,13 @@ export default class Slot {
   /** List of names to draw from */
   private nameList: string[];
 
+  /** List of winner prices */
+  private prizeList: string[];
+
+  private winnerList: string[];
+
+  private randomNames: string[];
+
   /** Whether there is a previous winner element displayed in reel */
   private havePreviousWinner: boolean;
 
@@ -62,6 +69,9 @@ export default class Slot {
     }: SlotConfigurations
   ) {
     this.nameList = [];
+    this.prizeList = [];
+    this.winnerList = [];
+    this.randomNames = [];
     this.havePreviousWinner = false;
     this.reelContainer = document.querySelector(reelContainerSelector);
     this.maxReelItems = maxReelItems;
@@ -82,8 +92,8 @@ export default class Slot {
       ],
       {
         duration: this.maxReelItems * 50, // 100ms for 1 item
-        easing: 'ease-in-out',
-        iterations: 1
+        easing: 'linear', // TODO: it should be 'ease-in-out' . Have to find a way to make slowing down animation to randomly selected name element.
+        iterations: 9999
       }
     );
 
@@ -102,7 +112,9 @@ export default class Slot {
       : [];
 
     reelItemsToRemove
-      .forEach((element) => { element.remove(); });
+      .forEach((element) => {
+        element.remove();
+      });
 
     this.havePreviousWinner = false;
 
@@ -114,6 +126,18 @@ export default class Slot {
   /** Getter for name list */
   get names(): string[] {
     return this.nameList;
+  }
+
+  set prizes(prizes: string[]) {
+    this.prizeList = prizes;
+  }
+
+  get prizes() {
+    return this.prizeList;
+  }
+
+  get winners() {
+    return this.winnerList;
   }
 
   /**
@@ -171,17 +195,18 @@ export default class Slot {
     }
 
     // Shuffle names and create reel items
-    let randomNames = Slot.shuffleNames<string>(this.nameList);
+    this.randomNames = Slot.shuffleNames<string>(this.nameList);
 
-    while (randomNames.length && randomNames.length < this.maxReelItems) {
-      randomNames = [...randomNames, ...randomNames];
+    while (this.randomNames.length && this.randomNames.length < this.maxReelItems) {
+      this.randomNames = [...this.randomNames, ...this.randomNames];
     }
 
-    randomNames = randomNames.slice(0, this.maxReelItems - Number(this.havePreviousWinner));
+    // eslint-disable-next-line max-len
+    this.randomNames = this.randomNames.slice(0, this.maxReelItems - Number(this.havePreviousWinner));
 
     const fragment = document.createDocumentFragment();
 
-    randomNames.forEach((name) => {
+    this.randomNames.forEach((name) => {
       const newReelItem = document.createElement('div');
       newReelItem.innerHTML = name;
       fragment.appendChild(newReelItem);
@@ -189,15 +214,21 @@ export default class Slot {
 
     reelContainer.appendChild(fragment);
 
-    console.log('Displayed items: ', randomNames);
-    console.log('Winner: ', randomNames[randomNames.length - 1]);
+    console.log('Displayed items: ', this.randomNames);
+    console.log('Winner: ', this.randomNames[this.randomNames.length - 1]);
 
-    // Remove winner form name list if necessary
+    this.addWinner(this.randomNames[this.randomNames.length - 1], this.getActivePrizeToDraw());
+
+    // Remove winner from name list if necessary
     if (shouldRemoveWinner) {
+      const { randomNames } = this;
       this.nameList.splice(this.nameList.findIndex(
         (name) => name === randomNames[randomNames.length - 1]
       ), 1);
     }
+
+    // remove prize from list
+    this.prizes.splice(0, 1);
 
     console.log('Remaining: ', this.nameList);
 
@@ -216,7 +247,36 @@ export default class Slot {
 
     Array.from(reelContainer.children)
       .slice(0, reelContainer.children.length - 1)
-      .forEach((element) => { element.remove(); });
+      .forEach((element) => {
+        element.remove();
+      });
+
+    this.havePreviousWinner = true;
+
+    if (this.onSpinEnd) {
+      this.onSpinEnd();
+    }
+    return true;
+  }
+
+  private addWinner(name, prize) {
+    this.winnerList.push(`${prize} - ${name}`);
+  }
+
+  public getActivePrizeToDraw() {
+    return this.prizeList.length <= 0 ? '-------' : this.prizeList[0];
+  }
+
+  public forceStopSpin() :boolean {
+    const { reelContainer, reelAnimation } = this;
+
+    reelAnimation?.finish();
+
+    Array.from(reelContainer!.children)
+      .slice(0, reelContainer!.children.length - 1)
+      .forEach((element) => {
+        element.remove();
+      });
 
     this.havePreviousWinner = true;
 

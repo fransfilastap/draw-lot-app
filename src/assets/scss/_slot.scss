@@ -6,26 +6,64 @@
 }
 
 .title {
-  height: auto;
-  max-width: $title-width;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  margin: $title-margin-top 0 $title-margin-bottom 0;
-  position: relative;
-  z-index: $z-index-title; // make sure title on top of sunburst
-  color: $color-title-border;
-  display: inline-block;
+  box-sizing: border-box;
+  justify-items: center;
+  align-items: center;
 
-  @each $media-query, $factor in $scale-factors {
-    @media #{$media-query} {
-      max-width: $title-width * $factor;
-      margin: $title-margin-top 0 $title-margin-bottom * $factor 0;
+  .subtitle {
+    height: auto;
+    max-width: $title-width;
+    width: 100%;
+    margin: $title-margin-top 0 $title-margin-bottom 0;
+    position: relative;
+    z-index: $z-index-title; // make sure title on top of sunburst
+    color: $color-title-border;
+    display: inline-block;
+
+    @each $media-query, $factor in $scale-factors {
+      @media #{$media-query} {
+        max-width: $title-width * $factor;
+        margin: $title-margin-top 0 $title-margin-bottom * $factor 0;
+      }
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
     }
   }
+}
 
-  svg {
-    width: 100%;
-    height: auto;
-    display: block;
+#prize {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0 10px 0;
+  .label {
+    color: $color-yellow;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  #active-prize {
+    padding-inline: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-items: center;
+    border: 5px solid $color-yellow;
+    background-color: white;
+    min-height: 5rem;
+    min-width: 5rem;
+    max-width: max-content;
+    border-radius: 20px;
+    color: $color-text-dark;
+    font-weight: bold;
+    font-size: 1.55rem;
   }
 }
 
@@ -34,6 +72,15 @@
   top: 1rem;
   right: 1rem;
 
+  .icon-button {
+    margin: 0 0 0 1.5rem;
+  }
+}
+
+.winner-control-group {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
   .icon-button {
     margin: 0 0 0 1.5rem;
   }
@@ -111,6 +158,17 @@
   }
 }
 
+.action-wrapper {
+  width: 100%;
+  max-height: max-content;
+  display: flex;
+  flex-direction: row;
+  align-content: space-around;
+  justify-content: center;
+  align-items: center;
+  column-gap: 1rem;
+}
+
 #draw-button {
   width: $draw-button-width;
   max-width: 100%;
@@ -128,6 +186,87 @@
       border-radius: 0.625rem * $factor;
       @include shadow('large', $factor);
     }
+  }
+}
+
+#stop-button {
+  width: $draw-button-width;
+  max-width: 100%;
+  margin: $draw-button-margin-top 0 0;
+  position: relative;
+  z-index: $z-index-draw-button; // make sure draw button on top of sunburst
+
+  @each $media-query, $factor in $scale-factors {
+    @media #{$media-query} {
+      width: $draw-button-width * $factor;
+      margin: $draw-button-margin-top * $factor 0 0;
+      font-size: max((1.75rem * $factor), 1rem);
+      line-height: max((1.75rem * $factor), 1rem);
+      padding: 1rem * $factor 0.625rem * $factor;
+      border-radius: 0.625rem * $factor;
+      @include shadow('large', $factor);
+    }
+  }
+}
+
+.winners {
+  position: fixed;
+  z-index: $z-index-settings - 1;
+  background-color: $color-settings-mask;
+  content: ' ';
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  display: none;
+
+  &__panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: $z-index-settings;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    max-width: $setting-panel-max-width;
+    padding: 3.125rem 3.125rem 0 3.125rem;
+    overflow: auto;
+    -webkit-overflow-scrolling: auto;
+
+    // Worksround for firefox overflow padding bottom issue
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=748518
+    &__group:last-child {
+      padding-bottom: 3.125rem;
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      column-gap: 0.5rem;
+      color: $color-text-light;
+    }
+
+    @media #{$mobile} {
+      padding: 10% 10% 0 10%;
+
+      &__group:last-child {
+        padding-bottom: 10%;
+      }
+    }
+  }
+
+  &__title {
+    margin: 0 0 1.875rem 0;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  #winners-close {
+    margin: 1.875rem 0 0 0;
+    display: block;
+    width: 100%;
   }
 }
 
@@ -193,6 +332,20 @@
 
 .theme--purple .settings__panel {
   background-color: $color-settings-background-purple;
+  color: $color-text-light;
+}
+
+.theme--oppo .settings__panel {
+  background-color: #01612e;
+  color: $color-text-light;
+}
+
+.theme--oppo .winners__panel {
+  background-color: #01612e;
+  color: $color-text-light;
+}
+
+.theme--oppo .footer {
   color: $color-text-light;
 }
 

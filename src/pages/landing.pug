@@ -4,6 +4,8 @@ include ../mixins/icons
   .control-group
     button#fullscreen-button.icon-button.icon-button--small
       +svg-icon.red.big(svg-icon-name='fullscreen')
+    button#winners-button.icon-button.icon-button--small
+      +svg-icon.red.big(svg-icon-name='winner')
     button#settings-button.icon-button.icon-button--small
       +svg-icon.red.big(svg-icon-name='settings')
 
@@ -11,8 +13,12 @@ include ../mixins/icons
 
   #lucky-draw
     .title
-      //- Pug loader currently does not handle webpack alias so we will use relative path here
-      include ../assets/images/title.svg
+      .subtitle
+        include ../assets/images/oppo-lucky-draw.svg
+
+    #prize
+      .label Hadiah
+      #active-prize
 
     .slot
       .slot__outer
@@ -23,7 +29,9 @@ include ../mixins/icons
       #sunburst.sunburst
         img(src="~@images/sunburst.svg" alt="sunburst")
 
-    button#draw-button.solid-button Draw
+    div.action-wrapper
+      button#draw-button.solid-button Draw
+      button#stop-button.solid-button Stop
 
   #settings.settings
     #settings-panel.settings__panel
@@ -39,6 +47,10 @@ include ../mixins/icons
             input(type="checkbox" checked="true" id="remove-from-list")
             span.slider
 
+        div.input-group
+          label.input-label(for="prize-list") Prize List
+          textarea.input-field.input-field--textarea(rows="8" placeholder="Separate each price by line break" id="prize-list")
+
         div.input-group.input-group--2-column
           label.input-label(for="enable-sound") Enable sound effect
           label.input--switch
@@ -48,3 +60,12 @@ include ../mixins/icons
         button#settings-save.solid-button.solid-button Save
         button#settings-close.solid-button.solid-button--danger Discard and close
 
+
+  #winner.winners
+    #winners-panel.winners__panel
+      div.winners__panel__group
+        h1.settings__title Pemenang
+      ol#winners-list.winners__panel__list
+
+      div.settings__panel__group
+        button#winners-close.solid-button.solid-button--danger Close

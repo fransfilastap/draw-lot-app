@@ -21,6 +21,8 @@ export default class SoundEffects {
   /** Audio context instancce */
   private audioContext?: AudioContext;
 
+  private oscillator? : OscillatorNode;
+
   /** Indicator for whether this sound effect instance is muted */
   private isMuted: boolean;
 
@@ -57,19 +59,19 @@ export default class SoundEffects {
       return;
     }
 
-    const oscillator = audioContext.createOscillator();
+    this.oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
-    oscillator.connect(gainNode);
+    this.oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    oscillator.type = type;
+    this.oscillator.type = type;
     gainNode.gain.value = volume; // set default volume to 10%
 
     const { currentTime: audioCurrentTime } = audioContext;
-
+    const self = this.oscillator;
     const totalDuration = sound.reduce((currentNoteTime, { key, duration }) => {
-      oscillator.frequency.setValueAtTime(PIANO_KEYS[key], audioCurrentTime + currentNoteTime);
+      self.frequency.setValueAtTime(PIANO_KEYS[key], audioCurrentTime + currentNoteTime);
       return currentNoteTime + duration;
     }, 0);
 
@@ -79,8 +81,8 @@ export default class SoundEffects {
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioCurrentTime + totalDuration);
     }
 
-    oscillator.start(audioCurrentTime);
-    oscillator.stop(audioCurrentTime + totalDuration);
+    this.oscillator.start(audioCurrentTime);
+    this.oscillator.stop(audioCurrentTime + totalDuration);
   }
 
   /**
@@ -142,5 +144,16 @@ export default class SoundEffects {
         resolve(true);
       }, totalDuration * 1000);
     });
+  }
+
+  public spinIndefinitely(): Promise<boolean> {
+    return this.spin(300);
+  }
+
+  public forceStop() {
+    const currentTime = this.audioContext?.currentTime;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.oscillator?.stop(currentTime);
   }
 }
