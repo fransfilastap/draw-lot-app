@@ -84,10 +84,15 @@ body {
 .footer {
   width: 100%;
   padding: 0.3125rem;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-align: center;
   box-sizing: border-box;
   flex: 0 1 auto;
+
+  .brand {
+    width: 3rem;
+    margin: 0 auto;
+  }
 }
 
 a {
