@@ -6,19 +6,20 @@ $screen-xl: 1200px;
 $screen-xxl: 1600px;
 
 // Media queries
-$mobile: 'only screen and (max-width: #{$screen-sm - 1})';
-$tablet: 'only screen and (min-width: #{$screen-sm}) and (max-width: #{$screen-md - 1})';
-$desktop: 'only screen and (min-width: #{$screen-md})';
-$small-desktop: 'only screen and (min-width: #{$screen-md})' and
-  (
-    max-width: #{$screen-xl - 1},
-  );
-$medium-desktop: 'only screen and (min-width: #{$screen-xl})' and
-  (
-    max-width: #{$screen-xxl - 1},
-  );
-$tablet-desktop: 'only screen and (min-width: #{$screen-sm})';
-$mobile-tablet: 'only screen and (max-width: #{$screen-md - 1})';
+// Media queries
+$mobile: unquote('only screen and (max-width: #{$screen-sm - 1})');
+$tablet: unquote(
+  'only screen and (min-width: #{$screen-sm}) and (max-width: #{$screen-md - 1})'
+);
+$desktop: unquote('only screen and (min-width: #{$screen-md})');
+$small-desktop: unquote(
+  'only screen and (min-width: #{$screen-md}) and (max-width: #{$screen-xl - 1})'
+);
+$medium-desktop: unquote(
+  'only screen and (min-width: #{$screen-xl}) and (max-width: #{$screen-xxl - 1})'
+);
+$tablet-desktop: unquote('only screen and (min-width: #{$screen-sm})');
+$mobile-tablet: unquote('only screen and (max-width: #{$screen-md - 1})');
 
 // mobile landscape
-$mobile-landscape: 'only screen and (max-height: #{$screen-sm - 1})';
+$mobile-landscape: unquote('only screen and (max-height: #{$screen-sm - 1})');

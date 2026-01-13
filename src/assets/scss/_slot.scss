@@ -151,7 +151,7 @@
 
   > div {
     height: $reel-item-height;
-    font-size: 3.75rem;
+    font-size: 3.25rem; // Slightly smaller than original 3.75rem
     font-weight: bold;
     text-align: center;
     line-height: $reel-item-height;
@@ -161,6 +161,16 @@
     white-space: nowrap;
     /* enable gpu accelaration to fix iOS flicker issue */
     transform: translate3d(0, 0, 0);
+  }
+
+  @each $media-query, $factor in $scale-factors {
+    @media #{$media-query} {
+      > div {
+        font-size: 3.25rem * $factor;
+        height: $reel-item-height * $factor;
+        line-height: $reel-item-height * $factor;
+      }
+    }
   }
 }
 
